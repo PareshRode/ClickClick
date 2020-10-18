@@ -32,9 +32,11 @@ public class Grid {
 		for(int i=1;i<=defaultGridValue;i++){  
 			for(int j=1;j<=defaultGridValue;j++){  
 				if (i==1 || i==defaultGridValue)
-					baseClass.driver.findElement(By.id(""+i+""+j)).click();
+					baseClass.selectElementbyId(i,j);		//selecting element by Id	(code update)
+					//baseClass.selectElementbyXpath(i,j);   //selecting element by Xpath
 				if (((j==1 || j==defaultGridValue) && (i!=1 && i!=defaultGridValue)))
-					baseClass.driver.findElement(By.id(""+i+""+j)).click();
+					baseClass.selectElementbyId(i,j);
+					//baseClass.selectElementbyXpath(i,j);
 			}  
 
 		}  
@@ -57,11 +59,32 @@ public class Grid {
 	}
 
 	@Then("^new grid should be displyed of size \"([^\"]*)\"$")
-	public void new_grid_should_be_displyed_of_size(String gridValue) throws Throwable {
+	public void new_grid_should_be_displyed_of_size(int gridValue) throws Throwable {
 
-		Assert.assertTrue("Grid of given size is not displyed", baseClass.driver.findElement(By.id(""+gridValue+""+gridValue)).isDisplayed());
-		baseClass.take_a_screenshot(gridValue);
+		int g1 = gridValue*10 + gridValue;
+		int g2 = (gridValue+1)*10 + (gridValue+1);
+			
+		
+		if (baseClass.driver.findElement(By.id(Integer.toString(g1))).isDisplayed())
+		{
+			if ( ! baseClass.driver.findElements(By.id(Integer.toString(g2))).isEmpty())
+			{
+			baseClass.take_a_screenshot(Integer.toString(g2));
+			baseClass.close_the_browser();
+			Assert.assertFalse("Grid of given size is not displyed",true);
+			}
+		}
+		else 
+		{
+			baseClass.take_a_screenshot(Integer.toString(g2));
+			baseClass.close_the_browser();
+			Assert.assertFalse("Grid of given size is not displyed",true);				
+		}
+		
+		baseClass.take_a_screenshot(Integer.toString(g2));
 		baseClass.close_the_browser();
+
+	
 
 	}
 
@@ -101,6 +124,7 @@ public class Grid {
 	@When("^user selects any non perimeter icon$")
 	public void user_selects_any_non_perimeter_icon() throws Throwable {
 		baseClass.driver.findElement(By.id(nonPerimeterIcon)).click();	
+		
 	}
 
 	@Then("^dialog does not appear$")
@@ -117,9 +141,6 @@ public class Grid {
 			Assert.assertTrue("No dialog present", true);
 		} 
 	}
-
-
-
 
 
 
